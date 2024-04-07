@@ -38,11 +38,11 @@ docker-engine
 # 更新缓存
 yum makecache fast
 
-# 安装必要的依赖
-yum install -y yum-utils device-mapper-persistent-data lvm2
-
 # 设置阿里 docker 镜像仓库地址
 yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+
+# 安装必要的依赖
+yum install -y yum-utils device-mapper-persistent-data lvm2
 
 # 安装 docker 引擎
 # 安装 Docker-CE（Community Edition，社区版）
@@ -78,89 +78,92 @@ docker images
 
 
 
-### 1.3、Docker 安装 MySQL
+### 1.3、安装 MySQL
+
+准备工作
 
 ```bash
-# 拉取 MySQL 镜像
-docker pull mysql:8.0.26
-
-# 查看 MySQL 镜像
-docker images
-
-# 创建 MySQL 实例
-docker run -p 3306:3306 --name mysql \
--v /mydata/mysql/log:/var/log/mysql \
--v /mydata/mysql/data:/var/lib/mysql \
--v /mydata/mysql/conf:/etc/mysql \
--e MYSQL_ROOT_PASSWORD=root \
--d mysql:8.0.26
-
-# 查看运行中的实例
-docker ps
+mkdir -p /usr/local/src/mysql/log
+mkdir -p /usr/local/src/mysql/data
+mkdir -p /usr/local/src/mysql/conf.d
 
 # 配置 MySQL
-vi /mydata/mysql/conf/my.cnf
+vi /usr/local/src/mysql/my.cnf
 ```
 
-- `/mydata/mysql/conf/my.cnf`
+`/usr/local/src/mysql/my.cnf`
 
 ```bash
-# 设置客户端工具的默认字符集为utf8
+[mysqld]
+user=mysql
+character-set-server=utf8
+default_authentication_plugin=mysql_native_password
+secure_file_priv=/var/lib/mysql
+expire_logs_days=7
+sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+max_connections=1000
+
 [client]
 default-character-set=utf8
 
-# 设置MySQL服务器的默认字符集为utf8
 [mysql]
 default-character-set=utf8
-
-[mysqld]
-# 每次连接时都会将连接的字符集设置为utf8_unicode_ci
-init_connect='SET collation_connection = utf8_unicode_ci'
-# 每次连接时都会将连接的校对规则设置为utf8
-init_connect='SET NAMES utf8'
-# 指定服务器默认的字符集为utf8
-character-set-server=utf8
-# 指定服务器默认的校对规则为utf8_unicode_ci
-collation-server=utf8_unicode_ci
-# 禁用客户端和服务器之间的字符集握手
-# 这意味着不会根据客户端的字符集设置来自动选择服务器的字符集，而是强制使用服务器配置的字符集。
-skip-character-set-client-handshake
-# 跳过域名解析
-skip-name-resolve
 ```
 
-- 进入 MySQL 容器实例中
+创建 MySQL 实例
 
 ```bash
-# 重启 MySQL 容器实例
-docker restart msyql 
-
-# 进入 MySQL 容器实例中
-docker exec -it mysql /bin/bash
-
-# 验证 MySQL
-whereis mysql
-
-# 退出 MySQL 容器实例
-exit;
+# 创建 MySQL 实例
+docker run \
+-p 3306:3306 \
+--name mysql \
+--restart=always \
+--privileged=true \
+--restart unless-stopped \
+-v /usr/local/src/mysql/log:/var/log/mysql \
+-v /usr/local/src/mysql/data:/var/lib/mysql \
+-v /usr/local/src/mysql/my.cnf:/etc/mysql/my.cnf \
+-v /usr/local/src/mysql/conf.d:/etc/mysql/conf.d \
+-e MYSQL_ROOT_PASSWORD=root \
+-d mysql:8.0.26
 ```
 
-- 通过容器的 MySQL 命令行工具连接
+设置远程访问
 
 ```bash
-# 通过容器的 MySQL 命令行工具连接
 docker exec -it mysql mysql -uroot -proot
 
-# 设置 root 远程访问
-# 授予用户 'root' 权限，允许其在任何主机上（'%'代表所有主机）对所有数据库（.）执行任何操作。这包括SELECT、INSERT、UPDATE、DELETE等操作。
-# 同时，使用 identified by 'root' 指定了用户 'root' 的密码为 'root'。
-# with grant option 表示 'root' 用户还可以将自己拥有的权限授予其他用户。
-grant all privileges on *.* to 'root'@'%' identified by 'root' with grant option;
-# 刷新MySQL的权限表，使新的授权或权限更改立即生效，而不必重新启动MySQL服务
-flush privileges;
+# 查看授权情况
+select user,host from user;
 
-# 退出 MySQL 客户端命令行
-exit;
+use mysql;
+ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY 'root';
+FLUSH PRIVILEGES;
+grant all on *.* to 'root'@'%';
+
+select user,host from user;
 ```
 
-### 
+### 1.4、安装 Git
+
+```bash
+yum install git -y
+
+git --version
+```
+
+### 1.5、安装 Gogs
+
+```bash
+mkdir -p /usr/local/src/docker/gogs
+
+docker run -d \
+--name=gogs \
+--restart=always \
+--privileged=true \
+-p 10022:22 \
+-p 3000:3000 \
+-v /usr/local/src/docker/gogs:/data \
+gogs/gogs
+```
+
