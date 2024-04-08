@@ -167,3 +167,15 @@ docker run -d \
 gogs/gogs
 ```
 
+## 2、启动前端项目
+
+```npm
+# 安装 cnpm
+npm install -g cnpm --registry=https://registry.npm.taobao.org
+
+# 安装依赖
+cnpm i
+
+# 启动项目
+npm run serve
+```
