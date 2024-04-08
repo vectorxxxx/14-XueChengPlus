@@ -6,3 +6,6 @@ Content-Type: application/json
   "auditStatus": "202002",
   "courseName": ""
 }
+
+###
+GET {{content_host}}/content/course-category/tree-nodes
