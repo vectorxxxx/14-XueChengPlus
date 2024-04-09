@@ -10,6 +10,7 @@ import com.xuecheng.content.mapper.CourseCategoryMapper;
 import com.xuecheng.content.mapper.CourseMarketMapper;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
+import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.model.po.CourseCategory;
@@ -41,6 +42,44 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService
 
     @Autowired
     private CourseCategoryMapper courseCategoryMapper;
+
+    /**
+     * 修改课程信息
+     *
+     * @param companyId
+     * @param dto
+     * @return {@link CourseBaseInfoDto}
+     */
+    @Transactional
+    @Override
+    public CourseBaseInfoDto updateCourseBase(Long companyId, EditCourseDto dto) {
+        // 课程id
+        Long courseId = dto.getId();
+        CourseBase courseBase = courseBaseMapper.selectById(courseId);
+        if (courseBase == null) {
+            XueChengPlusException.cast("课程不存在");
+        }
+
+        // 校验本机构只能修改本机构的课程
+        if (!courseBase
+                .getCompanyId()
+                .equals(companyId)) {
+            XueChengPlusException.cast("本机构只能修改本机构的课程");
+        }
+
+        // 更新课程基本信息
+        BeanUtils.copyProperties(dto, courseBase);
+        courseBase.setChangeDate(LocalDateTime.now());
+        courseBaseMapper.updateById(courseBase);
+
+        // 更新课程营销信息
+        CourseMarket courseMarket = new CourseMarket();
+        BeanUtils.copyProperties(dto, courseMarket);
+        saveCourseMarket(courseMarket);
+
+        // 查询课程信息
+        return this.getCourseBaseInfo(courseId);
+    }
 
     /**
      * 添加课程基本信息
@@ -144,6 +183,7 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService
      * @param courseId
      * @return {@link CourseBaseInfoDto}
      */
+    @Override
     public CourseBaseInfoDto getCourseBaseInfo(long courseId) {
         // 基本信息
         CourseBase courseBase = courseBaseMapper.selectById(courseId);
