@@ -38,7 +38,7 @@ public class CourseBaseInfoController
     @PutMapping("/course")
     public CourseBaseInfoDto modifyCourseBase(
             @RequestBody
-            @Validated
+            @Validated(ValidationGroups.Update.class)
                     EditCourseDto editCourseDto) {
         return courseBaseInfoService.updateCourseBase(COMPANY_ID, editCourseDto);
     }
