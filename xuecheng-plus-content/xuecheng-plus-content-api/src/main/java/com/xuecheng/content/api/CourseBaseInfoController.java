@@ -34,6 +34,16 @@ public class CourseBaseInfoController
     @Autowired
     private CourseBaseInfoService courseBaseInfoService;
 
+    @ApiOperation("删除课程信息")
+    @DeleteMapping("/course/{courseId}")
+    public void deleteCourseInfo(
+            @ApiParam(value = "课程id",
+                      required = true)
+            @PathVariable
+                    Long courseId) {
+        courseBaseInfoService.deleteCourseInfo(courseId);
+    }
+
     @ApiOperation("修改课程基础信息")
     @PutMapping("/course")
     public CourseBaseInfoDto modifyCourseBase(

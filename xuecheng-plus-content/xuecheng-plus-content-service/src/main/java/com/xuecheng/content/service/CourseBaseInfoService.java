@@ -18,6 +18,13 @@ public interface CourseBaseInfoService
 {
 
     /**
+     * 删除课程相关的基本信息、营销信息、课程计划、课程教师信息
+     *
+     * @param courseId
+     */
+    void deleteCourseInfo(Long courseId);
+
+    /**
      * 修改课程信息
      *
      * @param companyId

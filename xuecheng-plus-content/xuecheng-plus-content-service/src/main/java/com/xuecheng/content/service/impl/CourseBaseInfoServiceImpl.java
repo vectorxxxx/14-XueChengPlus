@@ -5,16 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.xuecheng.base.exception.XueChengPlusException;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
-import com.xuecheng.content.mapper.CourseBaseMapper;
-import com.xuecheng.content.mapper.CourseCategoryMapper;
-import com.xuecheng.content.mapper.CourseMarketMapper;
+import com.xuecheng.content.mapper.*;
 import com.xuecheng.content.model.dto.AddCourseDto;
 import com.xuecheng.content.model.dto.CourseBaseInfoDto;
 import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
-import com.xuecheng.content.model.po.CourseBase;
-import com.xuecheng.content.model.po.CourseCategory;
-import com.xuecheng.content.model.po.CourseMarket;
+import com.xuecheng.content.model.po.*;
 import com.xuecheng.content.service.CourseBaseInfoService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +38,59 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService
 
     @Autowired
     private CourseCategoryMapper courseCategoryMapper;
+
+    @Autowired
+    private TeachplanMapper teachplanMapper;
+
+    @Autowired
+    private CourseTeacherMapper courseTeacherMapper;
+
+    /**
+     * 删除课程相关的基本信息、营销信息、课程计划、课程教师信息
+     *
+     * @param courseId
+     */
+    @Transactional
+    @Override
+    public void deleteCourseInfo(Long courseId) {
+        // 课程的审核状态为未提交时方可删除。
+        // [
+        //     {
+        //         "code": "202001",
+        //         "desc": "审核未通过"
+        //     },
+        //     {
+        //         "code": "202002",
+        //         "desc": "未提交"
+        //     },
+        //     {
+        //         "code": "202003",
+        //         "desc": "已提交"
+        //     },
+        //     {
+        //         "code": "202004",
+        //         "desc": "审核通过"
+        //     }
+        // ]
+        final String auditStatus = courseBaseMapper
+                .selectById(courseId)
+                .getAuditStatus();
+        if (!"202002".equals(auditStatus)) {
+            XueChengPlusException.cast("课程审核状态已提交，无法删除");
+        }
+
+        // 删除课程基本信息
+        courseBaseMapper.deleteById(courseId);
+
+        // 删除课程营销信息
+        courseMarketMapper.deleteById(courseId);
+
+        // 删除课程计划
+        teachplanMapper.delete(new LambdaQueryWrapper<Teachplan>().eq(Teachplan::getCourseId, courseId));
+
+        // 删除课程教师信息
+        courseTeacherMapper.delete(new LambdaQueryWrapper<CourseTeacher>().eq(CourseTeacher::getCourseId, courseId));
+    }
 
     /**
      * 修改课程信息
