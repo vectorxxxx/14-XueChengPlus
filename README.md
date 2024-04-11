@@ -64,7 +64,14 @@ mkdir -p /etc/docker
 # 将JSON内容写入到 /etc/docker/daemon.json 文件中
 tee /etc/docker/daemon.json <<-'EOF'
 {
-	"registry-mirrors": ["https://1u4widvk.mirror.aliyuncs.com"]
+  "registry-mirrors": [
+    "https://hub-mirror.c.163.com",
+    "https://mirror.baidubce.com",
+    "https://registry.docker-cn.com",
+    "https://reg-mirror.qiniu.com",
+    "https://dockerhub.azk8s.cn",
+    "https://docker.mirrors.ustc.edu.cn"
+  ]
 }
 EOF
 # 重新加载systemd守护进程的配置文件
@@ -167,9 +174,31 @@ docker run -d \
 gogs/gogs
 ```
 
+### 1.6、安装 Nacos
+
+```bash
+mkdir -p /usr/local/src/nacos/logs
+
+docker pull nacos/nacos-server:v2.2.3
+
+docker run -d --name nacos-server \
+-p 8848:8848 \
+-p 9848:9848 \
+--restart=always \
+-e MODE=standalone \
+-e SPRING_DATASOURCE_PLATFORM=mysql \
+-e MYSQL_SERVICE_HOST=192.168.56.14 \
+-e MYSQL_SERVICE_PORT=3306 \
+-e MYSQL_SERVICE_DB_NAME=nacos_config \
+-e MYSQL_SERVICE_USER=root \
+-e MYSQL_SERVICE_PASSWORD=root \
+-v /usr/local/src/nacos/logs:/home/nacos/logs \
+nacos/nacos-server:v2.2.3
+```
+
 ## 2、启动前端项目
 
-```npm
+```bash
 # 安装 cnpm
 npm install -g cnpm --registry=https://registry.npm.taobao.org
 
@@ -179,3 +208,4 @@ cnpm i
 # 启动项目
 npm run serve
 ```
+
