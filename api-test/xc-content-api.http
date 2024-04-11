@@ -107,3 +107,21 @@ Content-Type: application/json
   "teachPlanId": 240
 }
 
+
+### 课程查询列表
+POST {{gateway_host}}/content/course/list?pageNo=2&pageSize=1
+Content-Type: application/json
+
+{
+  "auditStatus": "202002",
+  "courseName": ""
+}
+
+
+### 上传文件
+POST {{media_host}}/media/upload/coursefile
+Content-Type: multipart/form-data; boundary=WebAppBoundary
+
+--WebAppBoundary
+Content-Disposition: form-data; name="filedata"; filename="1.jpg"
+Content-Type: application/octet-stream
