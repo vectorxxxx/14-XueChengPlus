@@ -80,7 +80,7 @@ export default class MediaAddDialog extends Vue {
   /**
    * 文件状态改变时的钩子
    */
-  // 文件分块上传 
+  // 文件分块上传
   private handleChange(
     file: ElUploadInternalFileDetail,
     fileList: ElUploadInternalFileDetail[]
@@ -88,7 +88,7 @@ export default class MediaAddDialog extends Vue {
     this.fileList = fileList
     uploadByPieces({
       file,
-      pieceSize: 1, //分片大小
+      pieceSize: 5, //分片大小
       success: (data) => {
         file.percentage = (data.num/data.chunkCount) * 100
         console.log('success::' + data)
