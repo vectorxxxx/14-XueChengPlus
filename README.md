@@ -231,7 +231,25 @@ server /data1 /data2 /data3 /data4 \
 - 账号：minioadmin
 - 密码：minioadmin
 
+### 1.8、安装 XXL-JOB
 
+```bash
+docker pull xuxueli/xxl-job-admin:2.3.1
+
+docker run \
+-e PARAMS="--spring.datasource.url=jdbc:mysql://mysql:3306/xxl_job?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai --spring.datasource.username=root --spring.datasource.password=root" \
+--link mysql:mysql \
+-p 8080:8080 \
+-v /usr/local/src/xxl-job/tmp:/data/applogs \
+--name xxl-job-admin \
+--restart=alw
+-d xuxueli/xxl-job-admin:2.3.1
+```
+
+访问: [http://192.168.56.14:8080/xxl-job-admin](http://192.168.56.14:8080/xxl-job-admin)
+
+- 账号：admin
+- 密码：123456
 
 ## 2、启动前端项目
 
@@ -244,5 +262,32 @@ cnpm i
 
 # 启动项目
 npm run serve
+```
+
+
+
+## 3、FFmpeg
+
+```bash
+# 查看版本
+ffmpeg -v
+
+# avi 转 mp4
+ffmpeg -i test.avi test.mp4
+# avi 转 mp3
+ffmpeg -i test.avi test.mp3
+# avi 转 gif
+ffmpeg -i test.avi test.gif
+
+# 
+ffmpeg.exe \
+-i test.avi \
+-c:v libx264 \
+-s 1280x720 \
+-pix_fmt yuv420p \
+-b:a 63k \
+-b:v 753k \
+-r 18 \
+test.mp4
 ```
 
