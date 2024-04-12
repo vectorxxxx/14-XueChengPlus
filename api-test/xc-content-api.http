@@ -125,3 +125,14 @@ Content-Type: multipart/form-data; boundary=WebAppBoundary
 --WebAppBoundary
 Content-Disposition: form-data; name="filedata"; filename="1.jpg"
 Content-Type: application/octet-stream
+
+
+### 课程计划绑定视频
+POST {{content_host}}/content/teachplan/association/media
+Content-Type: application/json
+
+{
+  "mediaId": "d90f97f5e2870dafac9095d0a134bfce",
+  "fileName": "246、商城业务-购物车-改变购物项数量.avi",
+  "teachplanId": "234"
+}
