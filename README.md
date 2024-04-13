@@ -64,14 +64,7 @@ mkdir -p /etc/docker
 # 将JSON内容写入到 /etc/docker/daemon.json 文件中
 tee /etc/docker/daemon.json <<-'EOF'
 {
-  "registry-mirrors": [
-    "https://hub-mirror.c.163.com",
-    "https://mirror.baidubce.com",
-    "https://registry.docker-cn.com",
-    "https://reg-mirror.qiniu.com",
-    "https://dockerhub.azk8s.cn",
-    "https://docker.mirrors.ustc.edu.cn"
-  ]
+	"registry-mirrors":["https://docker.mirrors.ustc.edu.cn"]
 }
 EOF
 # 重新加载systemd守护进程的配置文件
@@ -242,7 +235,7 @@ docker run \
 -p 8080:8080 \
 -v /usr/local/src/xxl-job/tmp:/data/applogs \
 --name xxl-job-admin \
---restart=alw
+--restart=always \
 -d xuxueli/xxl-job-admin:2.3.1
 ```
 
@@ -250,6 +243,39 @@ docker run \
 
 - 账号：admin
 - 密码：123456
+
+### 1.9、安装 Nginx
+
+```bash
+mkdir -p /usr/local/src/nginx
+
+# 主要解决报错问题：docker: Error response from daemon: failed to create task for container: failed to create shim task: OCI runtime create failed: runc create failed: unable to start container process: error during container init: error mounting "/usr/local/src/nginx/conf/nginx.conf" to rootfs at "/etc/nginx/nginx.conf": mount /usr/local/src/nginx/conf/nginx.conf:/etc/nginx/nginx.conf (via /proc/self/fd/6), flags: 0x5000: not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type.
+# 根因：不支持直接挂载文件，只能挂载文件夹
+# 随便启动一个 nginx 实例，这一步只是为了复制出配置，后面会删掉重装
+docker run -p 80:80 --name nginx -d nginx:1.23.1
+docker container cp nginx:/etc/nginx /usr/local/src/nginx/conf/
+docker stop nginx
+docker rm nginx
+
+
+# 运行容器
+docker run \
+--name nginx \
+--restart=always \
+-p 80:80 \
+-p 443:443 \
+-v /usr/local/src/nginx/conf/conf.d:/etc/nginx/conf.d \
+-v /usr/local/src/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+-v /usr/local/src/nginx/html:/usr/share/nginx/html \
+-v /usr/local/src/nginx/logs:/var/log/nginx \
+-d nginx:1.23.1
+
+
+# 重新加载配置文件
+docker exec nginx  nginx -s reload
+```
+
+
 
 ## 2、启动前端项目
 
@@ -289,5 +315,33 @@ ffmpeg.exe \
 -b:v 753k \
 -r 18 \
 test.mp4
+```
+
+
+
+## FAQ
+
+### 1）系统时间、硬件时间不一致导致的问题
+
+**问题现象**
+
+- 向MinIO上传文件时，抛出异常：The difference between the request time and the server's time is too large.
+- docker报错: Get https://registry-1.docker.io/v2/: net/http: TLS handshake timeout
+
+**解决方案**
+
+```bash
+# 查看当前系统的本地时间
+date
+# 查看硬件时钟（RTC），即BIOS中的实时时钟
+hwclock
+# 查看系统时间、硬件时钟设置，以及时区等信息
+timedatectl
+
+
+# 将系统时间同步到硬件时钟，指定硬件时钟使用UTC时间
+hwclock --systohc --utc
+# 使用UTC时间来存储硬件时钟的值，而不是本地时间
+timedatectl set-local-rtc 0
 ```
 
