@@ -9,6 +9,15 @@
     <description>xuecheng-plus-parent</description>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>../xuecheng-plus-generator</module>
+        <module>../xuecheng-plus-base</module>
+        <module>../xuecheng-plus-system</module>
+        <module>../xuecheng-plus-content</module>
+        <module>../xuecheng-plus-media</module>
+        <module>../xuecheng-plus-gateway</module>
+    </modules>
+
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

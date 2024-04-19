@@ -1,5 +1,6 @@
 package com.xuecheng.media.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.xuecheng.base.model.PageParams;
 import com.xuecheng.base.model.PageResult;
 import com.xuecheng.base.model.RestResponse;
@@ -16,7 +17,7 @@ import java.io.File;
  * @description 媒资文件管理业务类
  * @date 2022/9/10 8:55
  */
-public interface MediaFileService
+public interface MediaFileService extends IService<MediaFiles>
 {
     /**
      * 合并分块
@@ -96,5 +97,23 @@ public interface MediaFileService
      */
     UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
 
+    /**
+     * 添加媒资文件到数据库
+     *
+     * @param companyId
+     * @param fileMd5
+     * @param uploadFileParamsDto
+     * @param bucket
+     * @param objectName
+     * @return {@link MediaFiles}
+     */
     MediaFiles addMediaFilesToDb(Long companyId, String fileMd5, UploadFileParamsDto uploadFileParamsDto, String bucket, String objectName);
+
+    /**
+     * 根据ID查询文件
+     *
+     * @param mediaId
+     * @return {@link MediaFiles}
+     */
+    MediaFiles getFileById(String mediaId);
 }

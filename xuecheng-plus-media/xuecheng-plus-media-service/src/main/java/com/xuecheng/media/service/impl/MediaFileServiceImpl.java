@@ -2,6 +2,7 @@ package com.xuecheng.media.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.j256.simplemagic.ContentInfo;
 import com.j256.simplemagic.ContentInfoUtil;
 import com.xuecheng.base.exception.XueChengPlusException;
@@ -50,7 +51,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 @Service
-public class MediaFileServiceImpl implements MediaFileService
+public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFiles> implements MediaFileService
 {
 
     @Autowired
@@ -291,11 +292,12 @@ public class MediaFileServiceImpl implements MediaFileService
         String chunkFilePath = getChunkFileFolderPath(fileMd5) + chunkIndex;
 
         // 文件流
-        try (InputStream fileInputStream = minioClient.getObject(GetObjectArgs
+        final GetObjectArgs getObjectArgs = GetObjectArgs
                 .builder()
                 .bucket(bucket_videoFiles)
                 .object(chunkFilePath)
-                .build())) {
+                .build();
+        try (InputStream fileInputStream = minioClient.getObject(getObjectArgs)) {
             if (fileInputStream != null) {
                 //分块已存在
                 return RestResponse.success(true);
@@ -323,8 +325,9 @@ public class MediaFileServiceImpl implements MediaFileService
     public PageResult<MediaFiles> queryMediaFiels(Long companyId, PageParams pageParams, QueryMediaParamsDto queryMediaParamsDto) {
 
         //构建查询条件对象
-        LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<MediaFiles>().like(!StringUtils.isEmpty(queryMediaParamsDto.getFilename()), MediaFiles::getFilename,
-                queryMediaParamsDto.getFilename());
+        LambdaQueryWrapper<MediaFiles> queryWrapper = new LambdaQueryWrapper<MediaFiles>()
+                .eq(!StringUtils.isEmpty(queryMediaParamsDto.getFileType()), MediaFiles::getFileType, queryMediaParamsDto.getFileType())
+                .like(!StringUtils.isEmpty(queryMediaParamsDto.getFilename()), MediaFiles::getFilename, queryMediaParamsDto.getFilename());
 
         //分页对象
         Page<MediaFiles> page = new Page<>(pageParams.getPageNo(), pageParams.getPageSize());
@@ -495,6 +498,11 @@ public class MediaFileServiceImpl implements MediaFileService
 
         log.debug("保存文件信息到数据库成功,{}", mediaFiles);
         return mediaFiles;
+    }
+
+    @Override
+    public MediaFiles getFileById(String mediaId) {
+        return baseMapper.selectById(mediaId);
     }
 
     /**

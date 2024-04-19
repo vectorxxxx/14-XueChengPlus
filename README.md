@@ -338,10 +338,18 @@ hwclock
 # 查看系统时间、硬件时钟设置，以及时区等信息
 timedatectl
 
+# 安装和配置 NTP 服务
+yum install ntp
+systemctl enable ntpd
+systemctl start ntpd
+# 手动同步时间
+ntpdate pool.ntp.org
+# 检查时间同步状态
+ntpstat
 
-# 将系统时间同步到硬件时钟，指定硬件时钟使用UTC时间
-hwclock --systohc --utc
-# 使用UTC时间来存储硬件时钟的值，而不是本地时间
-timedatectl set-local-rtc 0
+# 设置时区为 Asia/Shanghai
+timedatectl set-timezone Asia/Shanghai
+# 使用本地时间来存储硬件时钟的值，而不是UTC时间
+timedatectl set-local-rtc 1
 ```
 
