@@ -136,3 +136,7 @@ Content-Type: application/json
   "fileName": "246、商城业务-购物车-改变购物项数量.avi",
   "teachplanId": "234"
 }
+
+### 课程发布
+#POST {{content_host}}/content/coursepublish/2
+POST {{content_host}}/content/coursepublish/127
