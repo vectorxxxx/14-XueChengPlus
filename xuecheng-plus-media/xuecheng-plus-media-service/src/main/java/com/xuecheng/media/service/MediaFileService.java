@@ -93,9 +93,10 @@ public interface MediaFileService extends IService<MediaFiles>
      * @param companyId           机构id
      * @param uploadFileParamsDto 文件信息
      * @param localFilePath       文件本地路径
+     * @param objectName          对象名
      * @return UploadFileResultDto
      */
-    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath);
+    UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath, String objectName);
 
     /**
      * 添加媒资文件到数据库

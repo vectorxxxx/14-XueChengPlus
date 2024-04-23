@@ -13,19 +13,16 @@ import java.util.Arrays;
 /**
  * MyBatis-Plus 代码生成类
  */
-public class MediaCodeGenerator {
+public class MediaCodeGenerator
+{
 
 	// TODO 修改服务名以及数据表名
 	private static final String SERVICE_NAME = "media";
 
-	private static final String DATA_SOURCE_USER_NAME  = "root";
-	private static final String DATA_SOURCE_PASSWORD  = "mysql";
-	private static final String[] TABLE_NAMES = new String[]{
-			"media_files",
-			"media_process",
-			"media_process_history",
-			"mq_message",
-			"mq_message_history"
+	private static final String DATA_SOURCE_USER_NAME = "root";
+	private static final String DATA_SOURCE_PASSWORD = "root";
+	private static final String[] TABLE_NAMES = new String[] {
+			"media_files", "media_process", "media_process_history", "mq_message", "mq_message_history"
 			// "live_course",
 	};
 
@@ -58,8 +55,7 @@ public class MediaCodeGenerator {
 		// 数据库配置
 		DataSourceConfig dsc = new DataSourceConfig();
 		dsc.setDbType(DbType.MYSQL);
-		dsc.setUrl("jdbc:mysql://192.168.101.65:3306/xcplus_media"
-				+ "?useUnicode=true&useSSL=false&characterEncoding=utf8");
+		dsc.setUrl("jdbc:mysql://192.168.56.14:3306/xcplus_media" + "?useUnicode=true&useSSL=false&characterEncoding=utf8");
 		dsc.setDriverName("com.mysql.cj.jdbc.Driver");
 		dsc.setUsername(DATA_SOURCE_USER_NAME);
 		dsc.setPassword(DATA_SOURCE_PASSWORD);

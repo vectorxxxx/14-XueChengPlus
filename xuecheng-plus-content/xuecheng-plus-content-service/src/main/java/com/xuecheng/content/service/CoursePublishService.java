@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.xuecheng.content.model.dto.CoursePreviewDto;
 import com.xuecheng.content.model.po.CoursePublish;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * @author VectorX
  * @version V1.0
@@ -36,4 +39,22 @@ public interface CoursePublishService extends IService<CoursePublish>
      * @return void
      */
     void publish(Long companyId, Long courseId);
+
+    /**
+     * @param courseId 课程id
+     * @return File 静态化文件
+     * @description 课程静态化
+     * @author Mr.M
+     * @date 2022/9/23 16:59
+     */
+    File generateCourseHtml(Long courseId);
+
+    /**
+     * @param file 静态化文件
+     * @return void
+     * @description 上传课程静态化页面
+     * @author Mr.M
+     * @date 2022/9/23 16:59
+     */
+    void uploadCourseHtml(Long courseId, File file) throws IOException;
 }

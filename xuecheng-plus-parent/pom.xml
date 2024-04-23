@@ -13,6 +13,7 @@
         <module>../xuecheng-plus-generator</module>
         <module>../xuecheng-plus-base</module>
         <module>../xuecheng-plus-system</module>
+        <module>../xuecheng-plus-message-sdk</module>
         <module>../xuecheng-plus-content</module>
         <module>../xuecheng-plus-media</module>
         <module>../xuecheng-plus-gateway</module>
@@ -23,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring-boot.version>2.3.7.RELEASE</spring-boot.version>
-        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR9</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
         <org.mapstruct.version>1.3.1.Final</org.mapstruct.version>
         <org.projectlombok.version>1.18.8</org.projectlombok.version>

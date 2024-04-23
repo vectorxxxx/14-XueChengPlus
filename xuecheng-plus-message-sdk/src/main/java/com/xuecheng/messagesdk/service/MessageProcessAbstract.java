@@ -31,7 +31,7 @@ public abstract class MessageProcessAbstract
      * @param mqMessage 执行任务内容
      * @return boolean true:处理成功，false处理失败
      */
-    public abstract boolean execute(MqMessage mqMessage);
+    public abstract boolean execute(MqMessage mqMessage) throws Exception;
 
     /**
      * 扫描消息表多线程执行任务

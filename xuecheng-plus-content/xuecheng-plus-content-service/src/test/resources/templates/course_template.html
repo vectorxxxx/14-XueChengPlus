@@ -12,7 +12,7 @@
           content="">
     <link rel="icon"
           href="/static/img/asset-favicon.ico">
-    <title>学成在线-${model.courseBase.name}</title>
+    <title>学成在线-TR二送</title>
 
     <link rel="stylesheet"
           href="/static/plugins/normalize-css/normalize.css"/>
@@ -33,56 +33,32 @@
         <div class="banner-bg"></div>
         <div class="banner-info">
             <div class="banner-left">
-                <p>${model.courseBase.mtName} <span>\ ${model.courseBase.stName}</span></p>
-                <p class="tit">${model.courseBase.name}</p>
+                <p>前端开发 <span>\ HTML/CSS</span></p>
+                <p class="tit">TR二送</p>
                 <p class="pic">
-                    <#if model.courseBase.charge=='201000'>
                         <span class="new-pic">免费</span>
-                    <#else>
-                        <span class="new-pic">特惠价格￥${model.courseBase.price!''}</span>
-                        <span class="old-pic">原价￥${model.courseBase.originalPrice!''}</span>
-                    </#if>
                 </p>
                 <p class="info">
                     <a href="#"
                        @click.prevent="startLearning()">马上学习</a>
                     <span><em>难度等级</em>
-                        <#-- [{"code":"204001","desc":"初级"},{"code":"204002","desc":"中级"},{"code":"204003","desc":"高级"}] -->
-                        <#if model.courseBase.grade=='204001'>
-                            初级
-                        <#elseif model.courseBase.grade=='204002'>
                             中级
-                        <#elseif model.courseBase.grade=='204003'>
-                            高级
-                        </#if>
                     </span>
                     <span><em>课程时长</em>2小时27分</span>
                     <span><em>评分</em>4.7分</span>
                     <span><em>授课模式</em>
-                        <#-- [{"code":"200002","desc":"录播"},{"code":"200003","desc":"直播"}] -->
-                        <#if model.courseBase.teachmode=='200002'>
                             录播
-                        <#elseif model.courseBase.teachmode=='200003'>
-                            直播
-                        </#if>
                     </span>
                 </p>
             </div>
             <div class="banner-rit">
                 <p>
-                    <a href="http://www.51xuecheng.cn/course/preview/learning.html?id=${model.courseBase.id}"
+                    <a href="http://www.51xuecheng.cn/course/preview/learning.html?id=128"
                        target="_blank">
-                        <#if model.courseBase.pic??>
-                            <img src="http://file.51xuecheng.cn${model.courseBase.pic}"
+                            <img src="http://file.51xuecheng.cn/mediafiles/2024/04/11/ce01d1928a0da1a21a2ef4e1e2d2ecfc.jpg"
                                  alt=""
                                  width="270"
                                  height="156">
-                        <#else>
-                            <img src="/static/img/widget-video.png"
-                                 alt=""
-                                 width="270"
-                                 height="156">
-                        </#if>
                     </a>
                 </p>
                 <p class="vid-act"><span> <i class="i-heart"></i>收藏 23 </span> <span>分享 <i class="i-weixin"></i><i class="i-qq"></i></span></p>
@@ -123,7 +99,7 @@
                                 <div class="title"><span>适用人群</span></div>
                                 <div class="cont cktop">
                                     <div>
-                                        <p>${model.courseBase.users!""}</p>
+                                        <p>123123</p>
                                     </div>
                                     <!--<span class="on-off">更多 <i class="i-chevron-bot"></i></span>-->
                                 </div>
@@ -151,7 +127,7 @@
                                 <div class="title"><span>课程介绍</span></div>
                                 <div class="cont cktop">
                                     <div>
-                                        <p>${model.courseBase.description!""}</p>
+                                        <p>Provident architecto asperiores doloribus sed atque numquam suscipit. Optio placeat error nihil aut quas voluptas numquam. Sunt qui unde nostrum qui nobis. Unde sed laudantium exercitationem est eaque dolore. Aliquid ipsa provident sequi et dignissimos. Aut et nihil et et ipsa. Aperiam explicabo sint velit voluptatem distinctio enim vel. Perspiciatis aspernatur temporibus exercitationem ut possimus delectus et vel. Cupiditate eos molestias nam consequatur laboriosam qui sapiente vero. Illo non atque rerum nisi suscipit. Et repudiandae aut quia accusantium. Quia odit nihil nisi quo hic. Pariatur accusamus repellendus.</p>
                                     </div>
                                     <!--<span class="on-off">更多 <i class="i-chevron-bot"></i></span>-->
                                 </div>
@@ -207,26 +183,22 @@
                 <div class="article-cont-catalog">
                     <div class="article-left-box">
                         <div class="content">
-                            <#list model.teachplans as firstNode>
                                 <div class="item">
-                                    <div class="title act"><i class="i-chevron-top"></i>${firstNode.pname}<span class="time">x小时</span></div>
+                                    <div class="title act"><i class="i-chevron-top"></i>Chapter1<span class="time">x小时</span></div>
                                     <div class="drop-down"
                                          style="height: 260px;">
                                         <ul class="list-box">
-                                            <#list firstNode.teachPlanTreeNodes as secondNode>
-                                                <#if secondNode.teachplanMedia?? && secondNode.teachplanMedia.teachplanId??>
-                                                    <li>
-                                                        <a href="http://www.51xuecheng.cn/course/preview/learning.html?id=${model.courseBase.id}&chapter=${secondNode.teachplanMedia.teachplanId!''}"
-                                                           target="_blank">
-                                                            ${secondNode.pname}
-                                                        </a>
-                                                    </li>
-                                                </#if>
-                                            </#list>
                                         </ul>
                                     </div>
                                 </div>
-                            </#list>
+                                <div class="item">
+                                    <div class="title act"><i class="i-chevron-top"></i>Chapter2<span class="time">x小时</span></div>
+                                    <div class="drop-down"
+                                         style="height: 260px;">
+                                        <ul class="list-box">
+                                        </ul>
+                                    </div>
+                                </div>
                         </div>
                     </div>
                     <!--侧边栏-->
@@ -592,7 +564,7 @@
         <div class="mask"></div>
         <!--欢迎访问课程弹窗- start -->
         <div class="popup-course-box">
-            <div class="title">${model.courseBase.name} <span class="close-popup-course-box">×</span></div>
+            <div class="title">TR二送 <span class="close-popup-course-box">×</span></div>
             <div class="content">
                 <p>欢迎学习本课程，本课程免费您可以立即学习，也可加入我的课程表享受更优质的服务。</p>
                 <p><a href="#"
@@ -605,7 +577,7 @@
         <div class="mask"></div>
         <!--支付弹窗- start -->
         <div class="popup-pay-box">
-            <div class="title">${model.courseBase.name} <span class="close-popup-pay-box">×</span></div>
+            <div class="title">TR二送 <span class="close-popup-pay-box">×</span></div>
             <div class="content">
                 <img :src="qrcode"
                      width="200"
@@ -613,12 +585,12 @@
                      alt="请点击支付宝支付按钮，并完成扫码支付。"/>
 
                 <div class="info">
-                    <p class="info-tit">${model.courseBase.name} <span>课程有效期:${model.courseBase.validDays}天</span></p>
-                    <p class="info-pic">课程价格 : <span>￥${model.courseBase.originalPrice!''}元</span></p>
-                    <p class="info-new-pic">优惠价格 : <span>￥${model.courseBase.price!''}元</span></p>
+                    <p class="info-tit">TR二送 <span>课程有效期:365天</span></p>
+                    <p class="info-pic">课程价格 : <span>￥元</span></p>
+                    <p class="info-new-pic">优惠价格 : <span>￥0元</span></p>
                 </div>
             </div>
-            <div class="fact-pic">实际支付: <span>￥${model.courseBase.price!''}元</span></div>
+            <div class="fact-pic">实际支付: <span>￥0元</span></div>
             <div class="go-pay"><a href="#"
                                    @click.prevent="wxPay()">微信支付</a><a href="#"
                                                                        @click.prevent="aliPay()">支付宝支付</a><a href="#"
@@ -637,8 +609,8 @@
     <!--底部版权-->
 </div>
 <script>
-    var courseId = "${model.courseBase.id}";
-    var courseCharge = "${model.courseBase.charge}";
+    var courseId = "128";
+    var courseCharge = "201000";
 </script>
 <!--#include virtual="/include/course_detail_dynamic.html"-->
 </body>

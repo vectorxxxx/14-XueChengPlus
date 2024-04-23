@@ -338,19 +338,27 @@ hwclock
 # 查看系统时间、硬件时钟设置，以及时区等信息
 timedatectl
 
-# 安装和配置 NTP 服务
-yum install ntp
-systemctl enable ntpd
-systemctl start ntpd
-# 手动同步时间
-ntpdate pool.ntp.org
-# 检查时间同步状态
-ntpstat
-
 # 设置时区为 Asia/Shanghai
 timedatectl set-timezone Asia/Shanghai
 # 使用本地时间来存储硬件时钟的值，而不是UTC时间
 timedatectl set-local-rtc 1
+
+# 安装和配置 NTP 服务
+yum install -y ntp 
+yum install -y ntpdate
+systemctl enable ntpd
+systemctl start ntpd
+service ntpd status
+
+# 如果ntpd开机自启动没生效，则执行
+systemctl disable chronyd
+systemctl is-enabled chronyd
+# 重启服务器看ntpd.service是否启动
+reboot
+service ntpd status
+
+# 手动同步时间
+ntpdate pool.ntp.org
 ```
 
 ### 2）信号量与锁有何区别

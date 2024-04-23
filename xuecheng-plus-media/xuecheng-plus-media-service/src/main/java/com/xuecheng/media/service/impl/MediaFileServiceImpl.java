@@ -408,8 +408,9 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
     }
 
     @Override
-    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath) {
-
+    public UploadFileResultDto uploadFile(Long companyId, UploadFileParamsDto uploadFileParamsDto, String localFilePath, String objectName) {
+        // int i = 1 / 0;
+        
         //文件名
         String filename = uploadFileParamsDto.getFilename();
         //先得到扩展名
@@ -421,7 +422,11 @@ public class MediaFileServiceImpl extends ServiceImpl<MediaFilesMapper, MediaFil
         String defaultFolderPath = getDefaultFolderPath();
         //文件的md5值
         String fileMd5 = getFileMd5(new File(localFilePath));
-        String objectName = defaultFolderPath + fileMd5 + extension;
+
+        //存储到minio中的对象名(带目录)
+        if (StringUtils.isEmpty(objectName)) {
+            objectName = defaultFolderPath + fileMd5 + extension;
+        }
 
         // 上传文件到minio
         boolean result = addMediaFilesToMinIO(localFilePath, mimeType, bucket_mediafiles, objectName);
