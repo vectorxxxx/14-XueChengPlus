@@ -12,10 +12,11 @@
     <modules>
         <module>../xuecheng-plus-generator</module>
         <module>../xuecheng-plus-base</module>
-        <module>../xuecheng-plus-system</module>
         <module>../xuecheng-plus-message-sdk</module>
+        <module>../xuecheng-plus-system</module>
         <module>../xuecheng-plus-content</module>
         <module>../xuecheng-plus-media</module>
+        <module>../xuecheng-plus-search</module>
         <module>../xuecheng-plus-gateway</module>
     </modules>
 
@@ -40,7 +41,7 @@
         <commons-lang3.version>3.10</commons-lang3.version>
         <okhttp.version>4.8.1</okhttp.version>
         <swagger-spring-boot-starter.version>1.9.0.RELEASE</swagger-spring-boot-starter.version>
-        <elasticsearch.version>7.12.1</elasticsearch.version>
+        <elasticsearch.version>7.4.2</elasticsearch.version>
     </properties>
 
     <dependencyManagement>

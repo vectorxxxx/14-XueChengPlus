@@ -275,9 +275,178 @@ docker run \
 docker exec nginx  nginx -s reload
 ```
 
+### 1.10、安装 ElasticSearch
+
+```bash
+# 下载镜像文件
+docker pull elasticsearch:7.4.2
+
+# 初始化配置
+mkdir -p /usr/local/src/elasticsearch/config
+mkdir -p /usr/local/src/elasticsearch/data
+# 允许被所有IP来源的机器访问
+echo "http.host: 0.0.0.0" >> /usr/local/src/elasticsearch/config/elasticsearch.yml
+# 递归更改权限
+chmod -R 777 /usr/local/src/elasticsearch/
+
+# 运行 elasticsearch 镜像实例
+# 测试环境下，必须设置ES的初始内存和最大内存，否则默认占用内存过大会启动不了ES
+docker run \
+--name elasticsearch \
+--restart=always \
+-p 9200:9200 -p 9300:9300 \
+-e "discovery.type=single-node" \
+-e ES_JAVA_OPTS="-Xms64m -Xmx512m" \
+-v /usr/local/src/elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml \
+-v /usr/local/src/elasticsearch/data:/usr/share/elasticsearch/data \
+-v /usr/local/src/elasticsearch/plugins:/usr/share/elasticsearch/plugins \
+-d elasticsearch:7.4.2
+
+# 查看启动日志
+docker logs elasticsearch
+```
+
+访问验证：[http://192.168.56.14:9200](http://192.168.56.14:9200)
+
+### 1.11、安装 Kibana
+
+```bash
+# 下载镜像文件
+docker pull kibana:7.4.2
+
+# 运行 kibana 镜像实例
+docker run \
+--name kibana \
+--restart=always \
+-p 5601:5601 \
+-e ELASTICSEARCH_HOSTS=http://192.168.56.14:9200 \
+-d kibana:7.4.2
+
+# 查看启动日志
+docker logs kibana
+```
+
+访问验证：[http://192.168.56.14:5601](http://192.168.56.14:5601)
+
+### 1.12、安装 ik 分词器
+
+```bash
+# 进入 elasticsearch 插件目录
+cd /usr/local/src/elasticsearch/plugins/
+
+# 下载对应版本的 ik 分词器压缩包
+yum install wget -y
+wget https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v7.4.2/elasticsearch-analysis-ik-7.4.2.zip
+
+# 解压
+yum install unzip -y
+unzip elasticsearch-analysis-ik-7.4.2.zip
+rm -rf *.zip
+
+# 移至 ik 目录下并赋权限
+mkdir ik
+mv * ik/
+chmod -R 777 ik/
+
+# 以交互模式进入 elasticsearch 容器的命令行中
+docker exec -it elasticsearch /bin/bash
+
+# 运行 elasticsearch-plugin
+cd /bin
+elasticsearch-plugin
+
+# 查看插件是否已安装
+elasticsearch-plugin list
+
+# 重启 elasticsearch 容器
+exit;
+docker restart elasticsearch
+```
+
+测试
+
+```bash
+POST _analyze
+{
+  "analyzer": "ik_smart", 
+  "text": "我是中国人"
+}
+```
+
+### 1.13、安装 NVM
+
+#### 安装
+
+```bash
+# 卸载npm 
+npm uninstall npm -g
+ 
+# 卸载node
+yum remove nodejs npm -y
+
+#清除残留文件
+cd /usr/local/lib && rm -rf node*
+cd /usr/local/include && rm -rf node*
+cd /usr/local/bin && rm node*
+
+# 删除nvm
+rm -rf ~/.nvm
+# 删除npm
+rm -rf ~/.npm
+
+# 如果执行下面命令报错找不到对应的可执行文件，即表示卸载成功
+which nvm
+which npm
+which node
 
 
-## 2、启动前端项目
+# 二选一（推荐第二种）
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+wget -qO- https://raw.githubusercontent.com/creationix/nvm/v0.33.1/install.sh | bash
+
+# 加载环境变量
+source ~/.bashrc
+
+# 修改镜像源
+#在~/.bashrc里面加入如下，设置淘宝源
+export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/
+```
+
+#### 常用命令
+
+```bash
+# 查看 nvm 版本
+nvm --version
+
+# 查看远程的node可用版本
+nvm list-remote
+
+# 安装 node 最新版本
+nvm install node
+ 
+# 安装一个指定版本的nodejs
+nvm install v16.17.0
+ 
+# 卸载指定版本的nodejs
+nvm uninstall  v16.17.0
+
+# 查看本地可用的nodejs版本
+nvm ls
+nvm list
+
+# 使用指定版本的 node.js
+nvm use v16.17.0
+
+# 查看当前指向的nodejs版本
+nvm current
+ 
+# 指定node默认版本
+nvm alias default v16.17.0
+```
+
+
+
+## 2、NPM
 
 ```bash
 # 安装 cnpm
@@ -319,6 +488,125 @@ test.mp4
 
 
 
+## 4、ElasticSearch
+
+### 4.1、查看所有索引
+
+```bash
+#查看所有索引
+GET /_cat/indices?v
+```
+
+### 4.2、创建索引
+
+```bash
+# 创建索引，并指定Mapping
+PUT /course-publish
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 0
+  },
+  "mappings": {
+    "properties": {
+      "id": {
+        "type": "keyword"
+      },
+      "companyId": {
+        "type": "keyword"
+      },
+      "companyName": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "name": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "users": {
+        "index": false,
+        "type": "text"
+      },
+      "tags": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "mt": {
+        "type": "keyword"
+      },
+      "mtName": {
+        "type": "keyword"
+      },
+      "st": {
+        "type": "keyword"
+      },
+      "stName": {
+        "type": "keyword"
+      },
+      "grade": {
+        "type": "keyword"
+      },
+      "teachmode": {
+        "type": "keyword"
+      },
+      "pic": {
+        "index": false,
+        "type": "text"
+      },
+      "description": {
+        "analyzer": "ik_max_word",
+        "search_analyzer": "ik_smart",
+        "type": "text"
+      },
+      "createDate": {
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "type": "date"
+      },
+      "status": {
+        "type": "keyword"
+      },
+      "remark": {
+        "index": false,
+        "type": "text"
+      },
+      "charge": {
+        "type": "keyword"
+      },
+      "price": {
+        "type": "scaled_float",
+        "scaling_factor": 100
+      },
+      "originalPrice": {
+        "type": "scaled_float",
+        "scaling_factor": 100
+      },
+      "validDays": {
+        "type": "integer"
+      }
+    }
+  }
+}
+```
+
+### 4.3、查询索引结构
+
+```bash
+# 查询索引结构
+GET /course-publish/_mapping
+```
+
+### 4.4、删除索引
+
+```bash
+# 删除索引
+DELETE /course-publish
+```
+
+
+
 ## FAQ
 
 ### 1）系统时间、硬件时间不一致导致的问题
@@ -343,22 +631,22 @@ timedatectl set-timezone Asia/Shanghai
 # 使用本地时间来存储硬件时钟的值，而不是UTC时间
 timedatectl set-local-rtc 1
 
-# 安装和配置 NTP 服务
-yum install -y ntp 
+# 安装和配置 ntpdate 服务
 yum install -y ntpdate
-systemctl enable ntpd
-systemctl start ntpd
-service ntpd status
-
-# 如果ntpd开机自启动没生效，则执行
-systemctl disable chronyd
-systemctl is-enabled chronyd
-# 重启服务器看ntpd.service是否启动
-reboot
-service ntpd status
+systemctl enable ntpdate
+systemctl is-enabled ntpdate
+systemctl status ntpdate
+systemctl start ntpdate
 
 # 手动同步时间
 ntpdate pool.ntp.org
+
+# 自动同步时间
+crontab -e
+# 每10分钟同步一次
+*/10 * * * *  /usr/sbin/ntpdate -u pool.ntp.org >/dev/null 2>&1
+# 重启服务
+service crond restart
 ```
 
 ### 2）信号量与锁有何区别

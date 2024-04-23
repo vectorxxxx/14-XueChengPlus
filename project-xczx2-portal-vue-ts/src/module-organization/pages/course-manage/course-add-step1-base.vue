@@ -30,7 +30,7 @@
             :label="item.desc"
             :value="item.code"
           ></el-option>
-        </el-select> 
+        </el-select>
       </el-form-item>
       <el-form-item label="课程简介：">
         <el-input v-model="baseInfoData.description" type="textarea" :rows="5"></el-input>
@@ -142,7 +142,7 @@ export default class extends Vue {
       let data = await getBaseInfo(this.syncCourseBaseId)
       data.uiCategoryTreeSelected = [data.mt, data.st]
       this.baseInfoData = data
-      this.baseInfoData.pic = `${process.env.VUE_APP_SERVER_PICSERVER_URL}`+this.baseInfoData.pic    
+      this.baseInfoData.pic = `${process.env.VUE_APP_SERVER_PICSERVER_URL}`+this.baseInfoData.pic
     }
   }
 
@@ -153,7 +153,9 @@ export default class extends Vue {
       let valid: boolean = await this.validateForm()
       if (valid) {
             //图片路径去掉网址
+        console.log(this.baseInfoData.pic)
         this.baseInfoData.pic = this.baseInfoData.pic.replace(`${process.env.VUE_APP_SERVER_PICSERVER_URL}`,'')
+        console.log(this.baseInfoData.pic)
                const result: ICourseBaseInfo = await submitBaseInfo(this.baseInfoData)
         if (result.id !== undefined) {
           this.syncCourseBaseId = result.id
