@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,6 +59,13 @@ public class CourseBaseInfoController
     public CourseBaseInfoDto getCourseBaseById(
             @PathVariable
                     Long courseId) {
+        // 取出当前用户身份
+        final Object principal = SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+        System.out.println("principal = " + principal);
+        
         return courseBaseInfoService.getCourseBaseInfo(courseId);
     }
 

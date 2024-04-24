@@ -1,0 +1,16 @@
+### 授权码模式
+### 第一步申请授权码(浏览器请求)
+GET {{auth_host}}/auth/oauth/authorize?client_id=XcWebApp&response_type=code&scope=all&redirect_uri=http://www.51xuecheng.cn
+
+### 第二步申请令牌
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=authorization_code&code=onpdMc&redirect_uri=http://www.51xuecheng.cn
+
+### 密码模式
+POST {{auth_host}}/auth/oauth/token?client_id=XcWebApp&client_secret=XcWebApp&grant_type=password&username=zhangsan&password=123
+
+### 校验jwt令牌
+POST {{auth_host}}/auth/oauth/check_token?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE3MTM5MzU3MzgsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6ImE1Mjg1Nzk2LWQzZWYtNGYwYS1iN2Y5LWE4N2U0ZDVhNmQ1OCIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.hn-vqBResKtfY9JDDHrOsVSiJ6MXOdQWnbcX2cb8nDY
+
+### 携带token访问资源服务
+GET http://localhost:63040/content/course/2
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsieHVlY2hlbmctcGx1cyJdLCJ1c2VyX25hbWUiOiJ6aGFuZ3NhbiIsInNjb3BlIjpbImFsbCJdLCJleHAiOjE3MTM5NDQ0NDMsImF1dGhvcml0aWVzIjpbInAxIl0sImp0aSI6IjY1MjM3NDVmLTQyMzgtNDU5ZS05MGQ4LWE3NjU0NDNkZThmNiIsImNsaWVudF9pZCI6IlhjV2ViQXBwIn0.qzMuQ0VK5gDdtAmg-fA3mC-5zyamYsI549iVw2jnVhY
