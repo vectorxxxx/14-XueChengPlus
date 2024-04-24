@@ -9,11 +9,11 @@ import com.xuecheng.content.model.dto.EditCourseDto;
 import com.xuecheng.content.model.dto.QueryCourseParamsDto;
 import com.xuecheng.content.model.po.CourseBase;
 import com.xuecheng.content.service.CourseBaseInfoService;
+import com.xuecheng.content.util.SecurityUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -60,12 +60,14 @@ public class CourseBaseInfoController
             @PathVariable
                     Long courseId) {
         // 取出当前用户身份
-        final Object principal = SecurityContextHolder
-                .getContext()
-                .getAuthentication()
-                .getPrincipal();
-        System.out.println("principal = " + principal);
-        
+        // final Object principal = SecurityContextHolder
+        //         .getContext()
+        //         .getAuthentication()
+        //         .getPrincipal();
+        // System.out.println("principal = " + principal);
+        final SecurityUtil.XcUser user = SecurityUtil.getUser();
+        System.out.println("user = " + user);
+
         return courseBaseInfoService.getCourseBaseInfo(courseId);
     }
 
