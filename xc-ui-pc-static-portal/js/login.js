@@ -1,7 +1,7 @@
 /**
  * Created by mrt on 2018/3/23.
  */
-/*登陆*/
+/*登录*/
 //  const login = params => {
 //     //let loginRequest = querystring.stringify(params)
 //     //将参数格式化为key/value串

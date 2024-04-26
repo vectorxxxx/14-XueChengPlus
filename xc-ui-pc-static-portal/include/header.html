@@ -45,10 +45,18 @@
                     <!-- 登录 -->
                     <!--<a href="#" class="personal"><span class="personalIco"></span>消息</a>-->
                     <span v-if="logined == true">欢迎{{this.user.name}}</span>
-                    <a href="javascript:;" @click="logout" v-if="logined == true">退出</a>
-					 <a href="javascript:;" @click="showlogin" v-if="logined == false">登陆&nbsp;|&nbsp;注册</a>
-                    <a href="http://ucenter.51xuecheng.cn/" class="personal" target="_blank">我的学习</a>
-                    <a href="http://teacher.51xuecheng.cn/" class="personal" target="_blank">教学机构</a>
+                    <a href="javascript:;"
+                       @click="logout"
+                       v-if="logined == true">退出</a>
+                    <a href="javascript:;"
+                       @click="showlogin"
+                       v-if="logined == false">登录&nbsp;|&nbsp;注册</a>
+                    <a href="http://ucenter.51xuecheng.cn/"
+                       class="personal"
+                       target="_blank">我的学习</a>
+                    <a href="http://teacher.51xuecheng.cn/"
+                       class="personal"
+                       target="_blank">教学机构</a>
                     <!--<a href="#" class="myInfo"><img src="img/asset-myImg.jpg" alt="">个人中心</a>-->
                 </div>
                 <!--<div class="starch">

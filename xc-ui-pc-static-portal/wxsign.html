@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="http://www.51xuecheng.cn/static/plugins/normalize-css/normalize.css" />
     <link rel="stylesheet" href="http://www.51xuecheng.cn/static/plugins/bootstrap/dist/css/bootstrap.css" />
     <link rel="stylesheet" href="http://www.51xuecheng.cn/static/css/page-learing-sign.css" />
-    <script src="http://www.51xuecheng.cn/static/js/wxLogin.js"></script>
+    <script src="http://www.51xuecheng.cn/static/js/wxlogin.js"></script>
 </head>
 
 <body>
@@ -40,17 +40,17 @@
 
   //请用微信生成二维码
   function generateWxQrcode(token) {
-    var wxObj = new WxLogin({
-        self_redirect:true,
-        id:"login_container", 
-        appid: "wx17655f8047b85150", 
-        scope: "snsapi_login", 
-        redirect_uri: "http://tjxt-user-t.itheima.net/xuecheng/auth/wxLogin",
-        state: token,
-        style: "",
-        href: ""
+      var wxObj = new WxLogin({
+          self_redirect: true,
+          id: "login_container",
+          appid: "wxed9954c01bb89b47",
+          scope: "snsapi_login",
+          redirect_uri: "http://localhost:8160/auth/wxLogin",
+          state: token,
+          style: "",
+          href: ""
       });
-    }
+  }
 
      var loginVm= new Vue({  
             el: "#loginarea", 
