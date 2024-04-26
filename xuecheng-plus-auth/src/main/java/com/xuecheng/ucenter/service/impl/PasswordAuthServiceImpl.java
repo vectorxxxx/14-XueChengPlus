@@ -1,6 +1,8 @@
 package com.xuecheng.ucenter.service.impl;
 
+import com.alibaba.cloud.commons.lang.StringUtils;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.xuecheng.ucenter.feignclient.CheckCodeClient;
 import com.xuecheng.ucenter.mapper.XcUserMapper;
 import com.xuecheng.ucenter.model.dto.AuthParamsDto;
 import com.xuecheng.ucenter.model.dto.XcUserExt;
@@ -26,6 +28,9 @@ public class PasswordAuthServiceImpl implements AuthService
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private CheckCodeClient checkCodeClient;
+
     /**
      * 认证方法
      *
@@ -34,12 +39,22 @@ public class PasswordAuthServiceImpl implements AuthService
      */
     @Override
     public XcUserExt execute(AuthParamsDto authParamsDto) {
+        // 1、校验验证码
+        String checkcode = authParamsDto.getCheckcode();
+        String checkcodekey = authParamsDto.getCheckcodekey();
+        if (StringUtils.isBlank(checkcodekey) || StringUtils.isBlank(checkcode)) {
+            throw new RuntimeException("验证码为空");
+        }
+        Boolean verify = checkCodeClient.verify(checkcodekey, checkcode);
+        if (!verify) {
+            throw new RuntimeException("验证码输入错误");
+        }
+
+        // 2、校验账户
         XcUser user = xcUserMapper.selectOne(new LambdaQueryWrapper<XcUser>().eq(XcUser::getUsername, authParamsDto.getUsername()));
-        // 返回空表示用户不存在
         if (user == null) {
             throw new RuntimeException("账号不存在");
         }
-
         // 取出数据库存储的正确密码
         String passwordDb = user.getPassword();
         String passwordForm = authParamsDto.getPassword();

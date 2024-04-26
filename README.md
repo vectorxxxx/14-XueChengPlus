@@ -375,7 +375,7 @@ POST _analyze
 
 ### 1.13、安装 NVM
 
-#### 安装
+安装
 
 ```bash
 # 卸载npm 
@@ -412,41 +412,42 @@ source ~/.bashrc
 export NVM_NODEJS_ORG_MIRROR=https://npmmirror.com/mirrors/node/
 ```
 
-#### 常用命令
+### 1.14、安装 Redis
 
 ```bash
-# 查看 nvm 版本
-nvm --version
+# 下载镜像文件
+docker pull redis
 
-# 查看远程的node可用版本
-nvm list-remote
+# 创建配置文件
+mkdir -p /usr/local/src/redis/conf
+touch /usr/local/src/redis/conf/redis.conf
 
-# 安装 node 最新版本
-nvm install node
- 
-# 安装一个指定版本的nodejs
-nvm install v16.17.0
- 
-# 卸载指定版本的nodejs
-nvm uninstall  v16.17.0
+# 创建实例并启动
+docker run \
+--name redis \
+--restart=always \
+-p 6379:6379 \
+-v /usr/local/src/redis/data:/data \
+-v /usr/local/src/redis/conf/redis.conf:/etc/redis/redis.conf \
+-d redis \
+redis-server /etc/redis/redis.conf
 
-# 查看本地可用的nodejs版本
-nvm ls
-nvm list
+# 查看 redis 版本
+docker exec -it redis redis-server -v
 
-# 使用指定版本的 node.js
-nvm use v16.17.0
+# 使用 redis 镜像执行 redis-cli 命令连接
+docker exec -it redis redis-cli
 
-# 查看当前指向的nodejs版本
-nvm current
- 
-# 指定node默认版本
-nvm alias default v16.17.0
+# 默认存储在内存中，需要修改为持久化方式
+vi /usr/local/src/redis/conf/redis.conf
+appendonly yes
 ```
 
 
 
-## 2、NPM
+## 2、NPM / NVM
+
+### 2.1、NPM
 
 ```bash
 # 安装 cnpm
@@ -457,6 +458,31 @@ cnpm i
 
 # 启动项目
 npm run serve
+```
+
+### 2.2、NVM
+
+```bash
+# 查看 nvm 版本
+nvm --version
+
+# 查看远程的node可用版本
+nvm list-remote
+ 
+# 安装/卸载指定版本的 nodejs，不指定默认最新
+nvm install node
+nvm install node v16.17.0
+nvm uninstall node v16.17.0
+
+# 查看本地可用的 nodejs 版本
+nvm ls
+nvm list
+
+# 使用指定版本的 node.js
+nvm use v16.17.0
+
+# 查看当前指向的nodejs版本
+nvm current
 ```
 
 
