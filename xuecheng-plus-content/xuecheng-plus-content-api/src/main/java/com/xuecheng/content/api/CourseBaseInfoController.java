@@ -14,8 +14,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Objects;
 
 /**
  * @author VectorX
@@ -81,6 +84,7 @@ public class CourseBaseInfoController
     }
 
     @ApiOperation("课程查询接口")
+    @PreAuthorize("hasAuthority('xc_teachmanager_course_list')")
     @PostMapping("/course/list")
     public PageResult<CourseBase> list(
             @ApiParam(value = "分页条件",
@@ -91,6 +95,13 @@ public class CourseBaseInfoController
                       required = false)
             @RequestBody(required = false)
                     QueryCourseParamsDto queryCourseParams) {
-        return courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParams);
+        // 取出用户身份
+        final SecurityUtil.XcUser user = SecurityUtil.getUser();
+        // 机构id
+        String companyId = Objects
+                .requireNonNull(user)
+                .getCompanyId();
+
+        return courseBaseInfoService.queryCourseBaseList(Long.parseLong(companyId), pageParams, queryCourseParams);
     }
 }

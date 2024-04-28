@@ -67,4 +67,5 @@ public class PasswordAuthServiceImpl implements AuthService
         BeanUtils.copyProperties(user, xcUserExt);
         return xcUserExt;
     }
+    
 }

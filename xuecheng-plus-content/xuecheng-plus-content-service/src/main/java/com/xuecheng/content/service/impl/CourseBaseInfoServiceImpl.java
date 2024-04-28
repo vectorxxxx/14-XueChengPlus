@@ -262,10 +262,11 @@ public class CourseBaseInfoServiceImpl implements CourseBaseInfoService
      *
      * @param pageParams           分页条件
      * @param queryCourseParamsDto 查询条件
+     * @param companyId            公司ID
      * @return com.xuecheng.base.model.PageResult<com.xuecheng.content.model.po.CourseBase>
      */
     @Override
-    public PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
+    public PageResult<CourseBase> queryCourseBaseList(Long companyId, PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto) {
         // 查询条件
         final LambdaQueryWrapper<CourseBase> queryWrapper = new LambdaQueryWrapper<CourseBase>()
                 // 根据课程名称查询

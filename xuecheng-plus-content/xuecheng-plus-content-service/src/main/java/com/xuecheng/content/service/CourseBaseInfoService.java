@@ -55,7 +55,8 @@ public interface CourseBaseInfoService
      *
      * @param pageParams           分页条件
      * @param queryCourseParamsDto 查询条件
+     * @param companyId            公司ID
      * @return com.xuecheng.base.model.PageResult<com.xuecheng.content.model.po.CourseBase>
      */
-    PageResult<CourseBase> queryCourseBaseList(PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto);
+    PageResult<CourseBase> queryCourseBaseList(Long companyId, PageParams pageParams, QueryCourseParamsDto queryCourseParamsDto);
 }

@@ -37,7 +37,10 @@ class CourseBaseInfoServiceTests
         pageParams.setPageNo(1L);//页码
         pageParams.setPageSize(3L);//每页记录数
 
-        PageResult<CourseBase> courseBasePageResult = courseBaseInfoService.queryCourseBaseList(pageParams, queryCourseParamsDto);
+        // 机构id
+        Long companyId = 1232141425L;
+        
+        PageResult<CourseBase> courseBasePageResult = courseBaseInfoService.queryCourseBaseList(companyId, pageParams, queryCourseParamsDto);
         System.out.println(JSON.toJSONString(courseBasePageResult));
     }
 

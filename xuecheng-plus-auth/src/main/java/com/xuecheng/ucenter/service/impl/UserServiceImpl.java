@@ -1,8 +1,10 @@
 package com.xuecheng.ucenter.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.xuecheng.ucenter.mapper.XcMenuMapper;
 import com.xuecheng.ucenter.model.dto.AuthParamsDto;
 import com.xuecheng.ucenter.model.dto.XcUserExt;
+import com.xuecheng.ucenter.model.po.XcMenu;
 import com.xuecheng.ucenter.model.po.XcUser;
 import com.xuecheng.ucenter.service.AuthService;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +15,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * @author VectorX
@@ -26,6 +31,9 @@ public class UserServiceImpl implements UserDetailsService
 {
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Autowired
+    private XcMenuMapper menuMapper;
 
     /**
      * 根据账号查询用户信息
@@ -72,7 +80,15 @@ public class UserServiceImpl implements UserDetailsService
         // 将user对象转json
         String userString = JSON.toJSONString(user);
         // 用户权限,如果不加报Cannot pass a null GrantedAuthority collection
-        final String[] authorities = {"p1"};
+        String[] authorities = {"p1"};
+        // 查询用户权限
+        List<XcMenu> xcMenus = menuMapper.selectPermissionByUserId(user.getId());
+        if (!CollectionUtils.isEmpty(xcMenus)) {
+            authorities = xcMenus
+                    .stream()
+                    .map(XcMenu::getCode)
+                    .toArray(String[]::new);
+        }
 
         // 创建UserDetails对象,权限信息待实现授权功能时再向UserDetail中加入
         return User
@@ -82,4 +98,5 @@ public class UserServiceImpl implements UserDetailsService
                 .authorities(authorities)
                 .build();
     }
+
 }
