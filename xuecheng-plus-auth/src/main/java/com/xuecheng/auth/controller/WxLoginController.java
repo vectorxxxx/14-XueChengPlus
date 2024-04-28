@@ -4,8 +4,8 @@ import com.xuecheng.ucenter.model.po.XcUser;
 import com.xuecheng.ucenter.service.WxAuthService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -15,7 +15,7 @@ import java.io.IOException;
  * @description
  * @date 2024-04-26 16:08:35
  */
-@RestController
+@Controller
 @Slf4j
 public class WxLoginController
 {
