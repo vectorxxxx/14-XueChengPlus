@@ -1,4 +1,4 @@
-package com.xuecheng.learning.service;
+package com.xuecheng.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.xuecheng.base.exception.XueChengPlusException;
@@ -10,6 +10,7 @@ import com.xuecheng.learning.model.dto.XcChooseCourseDto;
 import com.xuecheng.learning.model.dto.XcCourseTablesDto;
 import com.xuecheng.learning.model.po.XcChooseCourse;
 import com.xuecheng.learning.model.po.XcCourseTables;
+import com.xuecheng.learning.service.MyCourseTablesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -230,6 +231,36 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService
                 .plusDays(coursepublish.getValidDays()));
         xcChooseCourseMapper.insert(xcChooseCourse);
         return xcChooseCourse;
+    }
+
+    @Override
+    public boolean saveChooseCourseSuccess(String chooseCourseId) {
+        // 根据选课id查询选课表
+        XcChooseCourse chooseCourse = xcChooseCourseMapper.selectById(chooseCourseId);
+        if (chooseCourse == null) {
+            log.debug("接收购买课程的消息，根据选课id从数据库找不到选课记录,选课id:{}", chooseCourseId);
+            return false;
+        }
+
+        // 选课状态
+        String status = chooseCourse.getStatus();
+        // 只有当未支付时才更新为已支付
+        // [{"code":"701001","desc":"选课成功"},{"code":"701002","desc":"待支付"}]
+        if ("701002".equals(status)) {
+            // 更新选课记录的状态为支付成功
+            chooseCourse.setStatus("701001");
+            int i = xcChooseCourseMapper.updateById(chooseCourse);
+            if (i <= 0) {
+                log.debug("添加选课记录失败:{}", chooseCourse);
+                XueChengPlusException.cast("添加选课记录失败");
+            }
+
+            // 向我的课程表插入记录
+            addCourseTables(chooseCourse);
+            return true;
+        }
+
+        return false;
     }
 
 }

@@ -443,6 +443,28 @@ vi /usr/local/src/redis/conf/redis.conf
 appendonly yes
 ```
 
+### 1.15、安装 RabbitMQ
+
+```bash
+# 安装 RabbitMQ 镜像
+docker run -d \
+--name rabbitmq \
+--restart=always \
+-p 5671:5671 -p 5672:5672 \
+-p 4369:4369 -p 25672:25672 \
+-p 15671:15671 -p 15672:15672 \
+rabbitmq:management
+```
+
+端口含义
+
+| 端口         | 含义             |
+| ------------ | ---------------- |
+| `4369`       | Erlang 发现      |
+| `5671, 5672` | AMQP 端口        |
+| `15672`      | Web 管理后台端口 |
+| `25672`      | HTTPS 端口       |
+
 
 
 ## 2、NPM / NVM

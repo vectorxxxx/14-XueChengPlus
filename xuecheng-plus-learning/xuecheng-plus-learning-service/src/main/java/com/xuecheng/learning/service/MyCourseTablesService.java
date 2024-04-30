@@ -45,4 +45,11 @@ public interface MyCourseTablesService
      */
     XcCourseTablesDto getLearningStatus(String userId, Long courseId);
 
+    /**
+     * 保存选课成功状态
+     *
+     * @param chooseCourseId
+     * @return
+     */
+    boolean saveChooseCourseSuccess(String chooseCourseId);
 }
