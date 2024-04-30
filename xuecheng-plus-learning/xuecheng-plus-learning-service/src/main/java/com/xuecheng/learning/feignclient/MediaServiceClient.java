@@ -7,16 +7,20 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
- * @description TODO
- * @author Mr.M
- * @date 2022/10/27 9:04
- * @version 1.0
+ * @author VectorX
+ * @version 1.0.0
+ * @description
+ * @date 2024/04/30
  */
- @FeignClient(value = "media-api",fallbackFactory = MediaServiceClientFallbackFactory.class)
- @RequestMapping("/media")
- public interface MediaServiceClient {
+@FeignClient(value = "media-api",
+             fallbackFactory = MediaServiceClientFallbackFactory.class)
+@RequestMapping("/media")
+public interface MediaServiceClient
+{
 
-  @GetMapping("/open/preview/{mediaId}")
-  public RestResponse<String> getPlayUrlByMediaId(@PathVariable("mediaId") String mediaId);
+    @GetMapping("/open/preview/{mediaId}")
+    RestResponse<String> getPlayUrlByMediaId(
+            @PathVariable("mediaId")
+                    String mediaId);
 
- }
+}

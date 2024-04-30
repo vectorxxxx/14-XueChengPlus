@@ -1,11 +1,15 @@
 package com.xuecheng.learning.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xuecheng.base.exception.XueChengPlusException;
+import com.xuecheng.base.model.PageResult;
 import com.xuecheng.content.model.po.CoursePublish;
 import com.xuecheng.learning.feignclient.ContentServiceClient;
 import com.xuecheng.learning.mapper.XcChooseCourseMapper;
 import com.xuecheng.learning.mapper.XcCourseTablesMapper;
+import com.xuecheng.learning.model.dto.MyCourseTableParams;
 import com.xuecheng.learning.model.dto.XcChooseCourseDto;
 import com.xuecheng.learning.model.dto.XcCourseTablesDto;
 import com.xuecheng.learning.model.po.XcChooseCourse;
@@ -29,7 +33,7 @@ import java.util.List;
  */
 @Slf4j
 @Service
-public class MyCourseTablesServiceImpl implements MyCourseTablesService
+public class MyCourseTablesServiceImpl extends ServiceImpl<XcCourseTablesMapper, XcCourseTables> implements MyCourseTablesService
 {
     @Autowired
     private XcChooseCourseMapper xcChooseCourseMapper;
@@ -261,6 +265,29 @@ public class MyCourseTablesServiceImpl implements MyCourseTablesService
         }
 
         return false;
+    }
+
+    @Override
+    public PageResult<XcCourseTables> mycourestabls(MyCourseTableParams params) {
+        // 页码
+        final int pageNo = params.getPage();
+        // 每页记录数,固定为4
+        final int pageSize = 4;
+
+        // 分页查询
+        Page<XcCourseTables> pageResult = baseMapper.selectPage(
+                // 分页条件
+                new Page<>(pageNo, pageSize),
+                // 查询条件
+                new LambdaQueryWrapper<XcCourseTables>().eq(XcCourseTables::getUserId, params.getUserId()));
+
+        // 获取记录
+        List<XcCourseTables> records = pageResult.getRecords();
+        // 记录总数
+        long total = pageResult.getTotal();
+
+        return new PageResult<>(records, total, pageNo, pageSize);
+
     }
 
 }

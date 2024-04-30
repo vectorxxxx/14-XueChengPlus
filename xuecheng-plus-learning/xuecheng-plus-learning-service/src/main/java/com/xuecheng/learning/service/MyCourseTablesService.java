@@ -1,7 +1,11 @@
 package com.xuecheng.learning.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
+import com.xuecheng.base.model.PageResult;
+import com.xuecheng.learning.model.dto.MyCourseTableParams;
 import com.xuecheng.learning.model.dto.XcChooseCourseDto;
 import com.xuecheng.learning.model.dto.XcCourseTablesDto;
+import com.xuecheng.learning.model.po.XcCourseTables;
 
 /**
  * @author VectorX
@@ -9,7 +13,7 @@ import com.xuecheng.learning.model.dto.XcCourseTablesDto;
  * @description 我的课程表service接口
  * @date 2024-04-28 16:19:47
  */
-public interface MyCourseTablesService
+public interface MyCourseTablesService extends IService<XcCourseTables>
 {
     /**
      * 添加选课
@@ -52,4 +56,14 @@ public interface MyCourseTablesService
      * @return
      */
     boolean saveChooseCourseSuccess(String chooseCourseId);
+
+    /**
+     * @param params
+     * @return com.xuecheng.base.model.PageResult<com.xuecheng.learning.model.po.XcCourseTables>
+     * @description 我的课程表
+     * @author Mr.M
+     * @date 2022/10/27 9:24
+     */
+    PageResult<XcCourseTables> mycourestabls(MyCourseTableParams params);
+
 }
