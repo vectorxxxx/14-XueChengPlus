@@ -18,8 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Objects;
-
 /**
  * @author VectorX
  * @version V1.0
@@ -98,9 +96,7 @@ public class CourseBaseInfoController
         // 取出用户身份
         final SecurityUtil.XcUser user = SecurityUtil.getUser();
         // 机构id
-        String companyId = Objects
-                .requireNonNull(user)
-                .getCompanyId();
+        String companyId = user.getCompanyId();
 
         return courseBaseInfoService.queryCourseBaseList(Long.parseLong(companyId), pageParams, queryCourseParams);
     }

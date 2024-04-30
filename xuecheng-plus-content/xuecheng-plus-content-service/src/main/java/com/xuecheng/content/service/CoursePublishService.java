@@ -57,4 +57,12 @@ public interface CoursePublishService extends IService<CoursePublish>
      * @date 2022/9/23 16:59
      */
     void uploadCourseHtml(Long courseId, File file) throws IOException;
+
+    /**
+     * 获取课程发布信息
+     *
+     * @param courseId
+     * @return {@link CoursePublish}
+     */
+    CoursePublish getCoursePublish(Long courseId);
 }

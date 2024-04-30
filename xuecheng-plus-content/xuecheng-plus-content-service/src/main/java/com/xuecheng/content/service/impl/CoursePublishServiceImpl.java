@@ -281,4 +281,9 @@ public class CoursePublishServiceImpl extends ServiceImpl<CoursePublishMapper, C
             XueChengPlusException.cast("上传静态文件异常");
         }
     }
+
+    @Override
+    public CoursePublish getCoursePublish(Long courseId) {
+        return baseMapper.selectById(courseId);
+    }
 }

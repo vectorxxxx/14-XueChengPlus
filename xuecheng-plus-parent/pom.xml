@@ -18,6 +18,9 @@
         <module>../xuecheng-plus-content</module>
         <module>../xuecheng-plus-media</module>
         <module>../xuecheng-plus-search</module>
+        <module>../xuecheng-plus-learning</module>
+        <module>../xuecheng-plus-orders</module>
+        <module>../xuecheng-plus-auth</module>
         <module>../xuecheng-plus-gateway</module>
     </modules>
 
