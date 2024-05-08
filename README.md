@@ -64,13 +64,20 @@ mkdir -p /etc/docker
 # 将JSON内容写入到 /etc/docker/daemon.json 文件中
 tee /etc/docker/daemon.json <<-'EOF'
 {
-	"registry-mirrors":["https://docker.mirrors.ustc.edu.cn"]
+    "registry-mirrors": [
+        "https://registry.hub.docker.com",
+        "http://hub-mirror.c.163.com",
+        "https://docker.mirrors.ustc.edu.cn",
+        "https://registry.docker-cn.com"
+    ]
 }
 EOF
 # 重新加载systemd守护进程的配置文件
 systemctl daemon-reload
 # 重启 docker
 systemctl restart docker
+# 查看镜像源是否生效
+docker info
 
 # 查看镜像
 docker images
@@ -464,6 +471,60 @@ rabbitmq:management
 | `5671, 5672` | AMQP 端口        |
 | `15672`      | Web 管理后台端口 |
 | `25672`      | HTTPS 端口       |
+
+### 1.16、安装 JDK
+
+```bash 
+# 下载JDK安装包到指定目录
+wget https://mirrors.tuna.tsinghua.edu.cn/Adoptium/8/jdk/x64/linux/OpenJDK8U-jdk_x64_linux_hotspot_8u412b08.tar.gz -P /usr/local/src/
+
+# 解压当前目录下的JDK压缩文件到安装目录
+tar -zxvf OpenJDK8U-jdk_x64_linux_hotspot_8u412b08.tar.gz -C /usr/local/src/jdk/
+
+# 环境变量
+vi /etc/profile
+
+export JAVA_HOME=/usr/local/src/jdk
+export JRE_HOME=$JAVA_HOME/jre
+export CLASSPATH=.:$CLASSPATH:$JAVA_HOME/lib:$JRE_HOME/lib
+export PATH=$PATH:$JAVA_HOME/bin:$JRE_HOME/bin
+
+source /etc/profile
+
+# 验证
+java -version
+```
+
+### 1.17、安装 Maven
+
+```bash
+# 解压
+cd /usr/local/src
+tar -zxvf apache-maven-3.6.1-bin.tar.gz
+mv /usr/local/src/apache-maven-3.6.1/ /usr/local/src/maven
+
+# 环境变量
+vi /etc/profile
+
+export MAVEN_HOME=/usr/local/src/maven
+export PATH=$PATH:$MAVEN_HOME/bin
+
+source /etc/profile
+
+# 验证
+mvn -v
+
+# 查找maven配置文件
+find / -type f -name settings.xml
+
+# 更换镜像
+<mirror>
+    <id>aliyun maven</id>
+    <name>aliyun</name>
+    <url>https://maven.aliyun.com/repository/public/</url>
+    <mirrorOf>central</mirrorOf>
+</mirror>
+```
 
 
 
