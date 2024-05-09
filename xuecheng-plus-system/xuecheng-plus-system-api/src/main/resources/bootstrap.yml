@@ -7,11 +7,6 @@ server:
 spring:
   application:
     name: system-api
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.56.14:3306/xcplus_system?serverTimezone=UTC&userUnicode=true&useSSL=false&
-    username: root
-    password: root
   cloud:
     # Nacos 注册中心配置
     nacos:
@@ -19,18 +14,23 @@ spring:
       discovery:
         namespace: ${spring.profiles.active}
         group: xuecheng-plus-project
-
+      config:
+        namespace: ${spring.profiles.active}
+        group: xuecheng-plus-project
+        file-extension: yaml
+        refresh-enabled: true
+        # 扩展配置
+        extension-configs:
+          - data-id: system-service-${spring.profiles.active}.yaml
+            group: xuecheng-plus-project
+            refresh: true
+        # 公用配置
+        shared-configs:
+          - data-id: swagger-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
+          - data-id: logging-${spring.profiles.active}.yaml
+            group: xuecheng-plus-common
+            refresh: true
   profiles:
     active: dev
-
-# 日志文件配置路径
-logging:
-  config: classpath:log4j2-${spring.profiles.active}.xml
-
-# swagger 文档配置
-swagger:
-  title: "学成在线系统管理"
-  description: "系统管理接口"
-  base-package: com.xuecheng.system
-  enabled: true
-  version: 1.0.0

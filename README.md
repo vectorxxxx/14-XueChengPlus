@@ -475,7 +475,7 @@ rabbitmq:management
 ### 1.16、安装 JDK
 
 ```bash 
-# 下载JDK安装包到指定目录
+# 下载JDK安装包到指定目录下
 wget https://mirrors.tuna.tsinghua.edu.cn/Adoptium/8/jdk/x64/linux/OpenJDK8U-jdk_x64_linux_hotspot_8u412b08.tar.gz -P /usr/local/src/
 
 # 解压当前目录下的JDK压缩文件到安装目录
@@ -524,6 +524,86 @@ find / -type f -name settings.xml
     <url>https://maven.aliyun.com/repository/public/</url>
     <mirrorOf>central</mirrorOf>
 </mirror>
+```
+
+### 1.18、安装 Jenkins
+
+方式一：docker
+
+```bash
+docker pull jenkinsci/blueocean
+
+mkdir -p /usr/local/src/jenkins
+chmod 777 /usr/local/src/jenkins
+
+docker run \
+-d \
+-p 8090:8080 \
+-p 50000:50000 \
+-v /usr/local/src/jenkins:/var/jenkins_home \
+--name jenkins \
+--restart=always \
+jenkinsci/blueocean
+
+# 更新镜像源
+vi /usr/local/src/jenkins/hudson.model.UpdateCenter.xml
+# https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
+
+# 重启（命令行）
+docker restart jenkins
+# 重启（非命令行）
+http://192.168.56.14:8090/restart
+
+# 查看密码
+cat /usr/local/src/jenkins/secrets/initialAdminPassword
+
+cd /usr/local/src/jenkins/updates/
+sed -i 's#www.google.com#www.baidu.com#g' default.json && sed -i 's#updates.jenkins.io/download/plugins#mirrors.tuna.tsinghua.edu.cn/jenkins/plugins#g' default.json
+```
+
+访问：[http://192.168.56.14:8090](http://192.168.56.14:8090)
+
+方式二：rpm
+
+```bash
+# 下载Jenkins
+wget https://repo.huaweicloud.com/jenkins/redhat-stable/jenkins-2.346.1-1.1.noarch.rpm
+
+# 安装Jenkins
+rpm -ivh jenkins-2.346.1-1.1.noarch.rpm
+# 查看Jenkins版本
+rpm -qa | grep jenkin
+# 卸载Jenkins
+rpm -e --nodeps jenkins-2.346.1-1.1.noarch
+find / -iname jenkins | xargs -n 1000 rm -rf
+
+# 修改配置文件
+vi /usr/lib/systemd/system/jenkins.service
+systemctl daemon-reload
+
+# 设置开机自启
+systemctl enable jenkins
+# 启动Jenkins
+systemctl start jenkins
+# 查看状态
+systemctl status jenkins
+
+# jenkins访问报错：AWT is not properly configured on this server. Perhaps you need to run your container with "-Djava.awt.headless=true"? See also: https://www.jenkins.io/redirect/troubleshooting/java.awt.headless
+yum install fontconfig ttf-dejavu -y
+# 重启动Jenkins
+systemctl restart jenkins
+
+# 查看密码
+cat /var/lib/jenkins/secrets/initialAdminPassword
+
+# 更换插件地址
+cd /var/lib/jenkins/updates
+cp default.json default.json.bak
+wget https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/dynamic-2.346/update-center.json --no-check-certificate
+mv update-center.json default.json
+sed -i 's#www.google.com#www.baidu.com#g' default.json && sed -i 's#updates.jenkins.io/download/plugins#mirrors.tuna.tsinghua.edu.cn/jenkins/plugins#g' default.json
+# 进入插件管理中心->高级设置
+https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
 ```
 
 
