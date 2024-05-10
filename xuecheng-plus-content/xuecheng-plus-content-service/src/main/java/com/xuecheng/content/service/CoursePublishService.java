@@ -65,4 +65,6 @@ public interface CoursePublishService extends IService<CoursePublish>
      * @return {@link CoursePublish}
      */
     CoursePublish getCoursePublish(Long courseId);
+
+    CoursePublish getCoursePublishCache(Long courseId);
 }

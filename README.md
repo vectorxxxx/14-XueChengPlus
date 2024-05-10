@@ -528,7 +528,7 @@ find / -type f -name settings.xml
 
 ### 1.18、安装 Jenkins
 
-方式一：docker
+#### 方式一：docker
 
 ```bash
 docker pull jenkinsci/blueocean
@@ -563,7 +563,7 @@ sed -i 's#www.google.com#www.baidu.com#g' default.json && sed -i 's#updates.jenk
 
 访问：[http://192.168.56.14:8090](http://192.168.56.14:8090)
 
-方式二：rpm
+#### 方式二：rpm
 
 ```bash
 # 下载Jenkins
@@ -576,6 +576,17 @@ rpm -qa | grep jenkin
 # 卸载Jenkins
 rpm -e --nodeps jenkins-2.346.1-1.1.noarch
 find / -iname jenkins | xargs -n 1000 rm -rf
+
+# 修改jenkins配置-添加自己的jdk路径
+vi /etc/init.d/jenkins
+# 修改jenkins用户权限为root
+vi /etc/sysconfig/jenkins
+
+# 在 /etc/init.d/ 执行
+cd /etc/init.d/
+./jenkins start   #启动服务
+./jenkins stop    #关闭服务
+./jenkins restart #重启服务
 
 # 修改配置文件
 vi /usr/lib/systemd/system/jenkins.service
@@ -598,12 +609,159 @@ cat /var/lib/jenkins/secrets/initialAdminPassword
 
 # 更换插件地址
 cd /var/lib/jenkins/updates
-cp default.json default.json.bak
+mv default.json default.json.bak
 wget https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/dynamic-2.346/update-center.json --no-check-certificate
 mv update-center.json default.json
 sed -i 's#www.google.com#www.baidu.com#g' default.json && sed -i 's#updates.jenkins.io/download/plugins#mirrors.tuna.tsinghua.edu.cn/jenkins/plugins#g' default.json
 # 进入插件管理中心->高级设置
 https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
+```
+
+#### 方式三：war
+
+```bash
+# 卸载干净
+find / -iname jenkins | xargs -n 1000 rm -rf
+find / -iname .jenkins | xargs -n 1000 rm -rf
+
+# 创建文件夹
+mkdir -p /usr/local/src/jenkins
+chmod 777 /usr/local/src/jenkins
+cd /usr/local/src/jenkins
+
+# 下载
+wget https://get.jenkins.io/war-stable/2.346.1/jenkins.war
+
+# 启动
+nohup java -jar /usr/local/src/jenkins/jenkins.war --httpPort=8090 >/usr/local/src/jenkins/jenkins.out &
+
+# 查看密码
+cat /root/.jenkins/secrets/initialAdminPassword
+
+# 配置国内的镜像
+find / -name default.json
+cd /root/.jenkins/updates
+mv default.json default.json.bak
+wget https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/dynamic-2.346/update-center.json --no-check-certificate
+mv update-center.json default.json
+sed -i 's#www.google.com#www.baidu.com#g' /root/.jenkins/updates/default.json && sed -i 's#updates.jenkins.io/download/plugins#mirrors.tuna.tsinghua.edu.cn/jenkins/plugins#g' /root/.jenkins/updates/default.json
+
+# 替换
+vi /root/.jenkins/hudson.model.UpdateCenter.xml
+https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/dynamic-2.346/update-center.json
+
+# 重启（命令行）
+# 第二列是进程ID（PID），第三列是进程的父进程ID（PPID）
+ps -ef | grep jenkins
+kill -9 PID
+nohup java -jar /usr/local/src/jenkins/jenkins.war --httpPort=8090 >/usr/local/src/jenkins/jenkins.out &
+
+# 重启（非命令行）
+http://192.168.56.14:8090/restart
+
+# 自启动
+vi /usr/local/src/jenkins/jenkins.sh
+```
+
+- jenkins.sh
+
+```shell
+#!/bin/bash
+
+# shell脚本必须指定，因为脚本不会自动加载环境变量，不写的话导致出现此错误
+JAVA_HOME=/usr/local/src/jdk
+PATH=$PATH:$JAVA_HOME/bin
+
+# jar包的决定路径
+app='/usr/local/src/jenkins/jenkins.war'
+
+# 获取执行脚本的时候带的参数
+cmd=$1
+
+# 抓取对应的java进程
+pid=`ps -ef|grep java|grep $app|awk '{print $2}'`
+
+startup(){
+  aa=`nohup java -jar $args $app --httpPort=8090 >> /usr/local/src/jenkins/jenkins.out &`
+  echo $aa
+}
+
+if [ ! $cmd ]; then
+  echo "Please specify args 'start|restart|stop'"
+  exit
+fi
+
+if [ $cmd == 'start' ]; then
+  if [ ! $pid ]; then
+    startup
+  else
+    echo "$app is running! pid=$pid"
+  fi
+fi
+
+if [ $cmd == 'restart' ]; then
+  if [ $pid ]
+    then
+      echo "$pid will be killed after 3 seconds!"
+      sleep 3
+      kill -9 $pid
+  fi
+  startup
+fi
+
+if [ $cmd == 'stop' ]; then
+  if [ $pid ]; then
+    echo "$pid will be killed after 3 seconds!"
+    sleep 3
+    kill -9 $pid
+  fi
+  echo "$app is stopped"
+fi
+```
+
+- 设置执行权限
+
+```shell
+chmod +x /usr/local/src/jenkins/jenkins.sh
+```
+
+- 自定义服务
+
+```shell
+vi /etc/systemd/system/jenkins.service
+```
+
+- jenkins.service
+
+```shell
+[Unit]
+Description=jenkins-service
+After=network.target
+
+[Service]
+Type=forking
+KillMode=process
+ExecStart=/bin/sh /usr/local/src/jenkins/jenkins.sh start
+ExecReload=/bin/sh /usr/local/src/jenkins/jenkins.sh restart
+ExecStop=/bin/sh /usr/local/src/jenkins/jenkins.sh stop
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- 设置执行权限
+
+```shell
+chmod +x /etc/systemd/system/jenkins.service
+```
+
+- 添加自启动服务
+
+```shell
+# 开机启动
+systemctl enable jenkins.service
+systemctl restart jenkins.service
+systemctl stop jenkins.service
 ```
 
 
